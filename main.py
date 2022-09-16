@@ -1,8 +1,8 @@
 
 import os
 import typer
-from bq_client import BQClient
-from postgres_client import PostgresClient
+from DatabaseConnector.bq_client import BQClient
+from DatabaseConnector.postgres_client import PostgresClient
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "service_account.json"
 PROJECT =  os.environ.get('PROJECT')
