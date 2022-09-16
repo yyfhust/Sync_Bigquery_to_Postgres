@@ -17,4 +17,5 @@ class BQClient:
         query_job = self.client.query(QUERY)
         df = query_job.to_dataframe()
         df = df.where(pd.notnull(df), None)
+        print(str(len(df)) + " rows in totall from bigquery table")
         return df

@@ -6,7 +6,7 @@ class PostgresClient:
     def __init__(self, postgresURL ) -> None:
         self.engine = create_engine(postgresURL)
 
-    def write_to_postgres (self, df, chunksize = 2000 ) -> None:
+    def write_to_postgres (self, df, primaryKey , table_name,  chunksize = 2000 ) -> None:
         def insert_do_nothing_on_conflicts(sqltable, conn, keys, data_iter):
             """
             Execute SQL statement inserting data, and do nothing on conflicting primary keys
@@ -33,8 +33,10 @@ class PostgresClient:
             mytable = table(table_name, *columns)
 
             insert_stmt = insert(mytable).values(list(data_iter))
-            do_nothing_stmt = insert_stmt.on_conflict_do_nothing(index_elements=['vionlabs_id'])
+            do_nothing_stmt = insert_stmt.on_conflict_do_nothing(index_elements=[primaryKey])
 
             conn.execute(do_nothing_stmt)
-        df.to_sql('reconciled', if_exists='append', con= self.engine, index=False, method=insert_do_nothing_on_conflicts, chunksize=chunksize)
 
+        print("start to insert rows to Postgres, and do nothing on conflicting primary keys")
+        df.to_sql(table_name , if_exists='append', con= self.engine, index=False, method=insert_do_nothing_on_conflicts, chunksize=chunksize)
+        print("finished!")
